@@ -1,5 +1,76 @@
 const myLibrary = [];
 
+const userInput = {
+    titleValue: '',
+    authorValue: '',
+    pageValue: '',
+    readValue: '',
+
+};
+
+// User interface
+const addDialog = document.getElementById('addDialog');
+const addBtn = document.querySelector('#add');
+const confirmBtn = addDialog.querySelector('#confirmBtn');
+const titleBox = addDialog.querySelector('#title');
+const authorBox = addDialog.querySelector('#author');
+const npBox = addDialog.querySelector('#pageNumber');
+const readSelect = addDialog.querySelector('#isRead');
+const contentArea = document.querySelector('#content');
+
+
+// open a dialog to add new Book
+addBtn.addEventListener('click', () => addDialog.showModal() ) ;
+
+
+// Add event listener to the controls in the form.
+titleBox.addEventListener('change', () =>  userInput.titleValue = titleBox.value);
+authorBox.addEventListener('change', () =>  userInput.authorValue = authorBox.value);
+npBox.addEventListener('change', () =>  userInput.pageValue = npBox.value);
+readSelect.addEventListener('change', () => userInput.readValue = readSelect.value);
+
+confirmBtn.addEventListener('click', (e) => {
+
+    let newBook = new Book(userInput.titleValue, userInput.authorValue,
+        userInput.pageValue, userInput.readValue);
+
+    addBookToLibrary(newBook);
+
+    let Idx = myLibrary.length-1;
+    displayCard(Idx);
+
+
+
+    const removeBtn = document.querySelector(`.removeBtn[data-index = '${Idx}']`);
+    removeBtn.addEventListener('click', () => {
+        
+        let cIdx = removeBtn.getAttribute('data-index');
+        console.log(cIdx);
+        let card_to_remove = document.querySelector(`.card[data-index = '${cIdx}']`); 
+
+        contentArea.removeChild(card_to_remove);
+        myLibrary.splice(cIdx, 1);
+
+        // update index for the "card" in DOM
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            let I = card.getAttribute('data-index')
+            if (I > cIdx) {
+                card.setAttribute('data-index', `${I - 1}`);
+                const rmvB = card.querySelector('.removeBtn');
+                rmvB.setAttribute('data-index', `${I - 1}`);
+
+            }
+        });
+     });
+
+    e.preventDefault();
+    addDialog.close();
+
+
+})
+
+
 function Book(title, author, npage, isRead) {
     this.title = title;
     this.author = author;
@@ -43,6 +114,8 @@ function createCard(idx) {
     removeBtn.style.color = 'white';
     removeBtn.textContent = 'Remove'
     removeBtn.style.fontSize = '20px';
+    removeBtn.classList.add('removeBtn');
+    removeBtn.setAttribute('data-index', `${idx}`);
 
     readBtn.style.flex = '1';
     readBtn.style.height = '40px';
@@ -60,7 +133,7 @@ function createCard(idx) {
     btnContainer.appendChild(readBtn);
 
     card.classList.add('card');
-    card.setAttribute('data-index', `'${idx}'`);
+    card.setAttribute('data-index', `${idx}`);
 
     const myNewBook = myLibrary[idx];
     title.textContent = myNewBook.title;
@@ -90,58 +163,15 @@ function createCard(idx) {
 }
 
 function displayCard(idx) {
-
-    const contentArea = document.querySelector('#content');
     let newCard = createCard(idx);
     contentArea.appendChild(newCard);
 
 }
 
-function addBookToLibrary() {
-    const addDialog = document.getElementById('addDialog');
-    const addBtn = document.querySelector('#add');
-    const confirmBtn = addDialog.querySelector('#confirmBtn');
-    const titleBox = addDialog.querySelector('#title');
-    const authorBox = addDialog.querySelector('#author');
-    const npBox = addDialog.querySelector('#pageNumber');
-    const readSelect = addDialog.querySelector('#isRead');
-    
-    
-    // "add new book" button opens the <dialog> modally
-    addBtn.addEventListener('click', () => addDialog.showModal() ) ;
-
-    let titleValue = '';
-    let authorValue = '';
-    let pageValue = '';
-    let readValue = '';
-
-    titleBox.addEventListener('change', () =>  titleValue = titleBox.value);
-    authorBox.addEventListener('change', () =>  authorValue = authorBox.value);
-    npBox.addEventListener('change', () =>  pageValue = npBox.value);
-    readSelect.addEventListener('change', () => readValue = readSelect.value);
-
-    confirmBtn.addEventListener('click', (e) => {
-
-        let newBook = new Book(titleValue, authorValue,
-            pageValue, readValue);
-
-        myLibrary.push(newBook);
-
-        e.preventDefault();
-        addDialog.close();
-
-
-    })
-
-    
-
-    
-
-    addDialog.addEventListener('close', (e) => {
-        displayCard(myLibrary.length-1);
-    })
-   
-
+function addBookToLibrary(newBook) {
+    myLibrary.push(newBook);
 }
 
-addBookToLibrary();
+
+
+
