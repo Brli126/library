@@ -27,7 +27,13 @@ addBtn.addEventListener('click', () => addDialog.showModal() ) ;
 titleBox.addEventListener('change', () =>  userInput.titleValue = titleBox.value);
 authorBox.addEventListener('change', () =>  userInput.authorValue = authorBox.value);
 npBox.addEventListener('change', () =>  userInput.pageValue = npBox.value);
-readSelect.addEventListener('change', () => userInput.readValue = readSelect.value);
+readSelect.addEventListener('change', () => {
+    if (readSelect.value === 'Yes') {
+    userInput.readValue = true;
+    } else {
+        userInput.readValue = false;
+    }
+});
 
 confirmBtn.addEventListener('click', (e) => {
 
@@ -40,7 +46,7 @@ confirmBtn.addEventListener('click', (e) => {
     displayCard(Idx);
 
 
-
+    // DOM manipulation for the remove button
     const removeBtn = document.querySelector(`.removeBtn[data-index = '${Idx}']`);
     removeBtn.addEventListener('click', () => {
         
@@ -63,6 +69,28 @@ confirmBtn.addEventListener('click', (e) => {
             }
         });
      });
+
+
+     // DOM manipulation for the read button
+
+     const readBtn = document.querySelector(`.removeBtn[data-index = '${Idx}'] + .readBtn`);
+     readBtn.addEventListener('click', () => {
+        console.log('clicked');
+        let cIdx = removeBtn.getAttribute('data-index');
+        let isRead = myLibrary[cIdx].isRead;
+        isRead = !isRead;
+        myLibrary[cIdx].isRead = isRead;
+
+        if (isRead === false) {
+            readBtn.style.backgroundColor = '#0ea5e9';
+            readBtn.textContent = 'Not Read';
+    
+        } else {
+            readBtn.style.backgroundColor = '#22c55e';
+            readBtn.textContent = 'Read';
+        }
+
+     })
 
     e.preventDefault();
     addDialog.close();
@@ -121,10 +149,19 @@ function createCard(idx) {
     readBtn.style.height = '40px';
     readBtn.style.border = 'none';
     readBtn.style.borderRadius = '20px';
-    readBtn.style.backgroundColor = '#0ea5e9';
     readBtn.style.color = 'white';
     readBtn.textContent = 'Read';
     readBtn.style.fontSize = '20px';
+    readBtn.classList.add('readBtn');
+
+    if (myLibrary[idx].isRead === false) {
+        readBtn.style.backgroundColor = '#0ea5e9';
+        readBtn.textContent = 'Not Read';
+
+    } else {
+        readBtn.style.backgroundColor = '#22c55e';
+        readBtn.textContent = 'Read';
+    }
     
 
 
