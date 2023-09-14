@@ -81,22 +81,28 @@ confirmBtn.addEventListener('click', (e) => {
         isRead = !isRead;
         myLibrary[cIdx].isRead = isRead;
 
-        if (isRead === false) {
-            readBtn.style.backgroundColor = '#0ea5e9';
-            readBtn.textContent = 'Not Read';
-    
-        } else {
-            readBtn.style.backgroundColor = '#22c55e';
-            readBtn.textContent = 'Read';
-        }
-
-     })
+        toggleRead(readBtn);
+     });
 
     e.preventDefault();
     addDialog.close();
 
 
 })
+
+function toggleRead(readBtn) {
+    let readStatus = readBtn.getAttribute('data-status');
+    if (readStatus === 'Read') {
+        readBtn.style.backgroundColor = '#0ea5e9';
+        readBtn.textContent = 'Not Read';
+        readBtn.setAttribute('data-status', 'NotRead');
+
+    } else {
+        readBtn.style.backgroundColor = '#22c55e';
+        readBtn.textContent = 'Read';
+        readBtn.setAttribute('data-status', 'Read');
+    }
+}
 
 
 function Book(title, author, npage, isRead) {
@@ -157,10 +163,12 @@ function createCard(idx) {
     if (myLibrary[idx].isRead === false) {
         readBtn.style.backgroundColor = '#0ea5e9';
         readBtn.textContent = 'Not Read';
+        readBtn.setAttribute('data-status','NotRead');
 
     } else {
         readBtn.style.backgroundColor = '#22c55e';
         readBtn.textContent = 'Read';
+        readBtn.setAttribute('data-status', 'Read');
     }
     
 
